@@ -28,7 +28,7 @@ const Footer = () => {
   }, []);
 
   const quickLinks = [
-    { name: 'Admission Partner Portal', href: 'https://admission-partner-portal2.onrender.com/auth/login', icon: UserPlus },
+    { name: 'Admission Partner Portal', href: 'https://gogaledu.com/auth/login', icon: UserPlus },
     { name: 'Franchise Partner', href: '/franchise-partner', icon: Store },
     { name: 'New Center Application', href: '/new-center', icon: Building2 },
     { name: 'Career', href: '/careers', icon: Briefcase },
@@ -249,5 +249,6 @@ const Footer = () => {
     </motion.footer>
   );
 };
+
 
 export default Footer;
