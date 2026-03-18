@@ -1,12 +1,12 @@
-"use client"
+export const dynamic = "force-dynamic";
 
-import { Suspense } from "react"
-import PaymentSuccessContent from "./PaymentSuccessContent"
+import { Suspense } from "react";
+import PaymentSuccessContent from "./PaymentSuccessContent";
 
-export default function PaymentSuccess() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <PaymentSuccessContent />
-        </Suspense>
-    )
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
+  );
 }
