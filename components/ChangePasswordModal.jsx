@@ -206,4 +206,6 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
             )}
         </AnimatePresence>
     );
-}
+};
+
+export default ChangePasswordModal;
