@@ -52,6 +52,15 @@ const teamMembers = [
     specialization: "Data Science & AI",
     image: "/team/founder.jpg",
     linkedin: "https://www.linkedin.com/in/deepak-kumar-036b26b0/"
+  },
+
+  {
+    name: "Shyam N.",
+    role: "Head of Growth",
+    experience: "Ex – BYJU'S",
+    specialization: "Business Growth & Strategy",
+    image: "/team/shyam.jpg",
+    linkedin: "https://www.linkedin.com/in/shyam191411/"
   }
 ];
 
