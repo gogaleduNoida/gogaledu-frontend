@@ -311,10 +311,8 @@ const CoursesPage = () => {
 
           {/* Courses Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-             {CourseData
-              .filter((course) => course.slug !== "aml-anti-money-laundering-specialist-course")
-              .map((course, index) => (
-                <CourseCard key={course.id} course={course} index={index} />
+            {CourseData.map((course, index) => (
+              <CourseCard key={course.id} course={course} index={index} />
             ))}
           </div>
         </div>
@@ -325,174 +323,16 @@ const CoursesPage = () => {
 
     {/* Heading */}
     <div className="text-center mb-12">
-      {/* <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
+      <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
         Get Your <span className="text-green-600">Certificate</span>
       </h3>
       <p className="text-gray-600 max-w-xl mx-auto mt-2">
         Receive a verified certificate upon successful completion of your course and final project.
-      </p> */}
-
-       <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Other Certification{" "}
-              <span className="bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
-                Courses
-              </span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Expand your career opportunities with our specialized analyst and
-        business focused training programs designed for real industry needs.
-            </p>
-
-    </div>
-
-    {/* Courses List */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-
-      {[
-        "MIS Analyst",
-        "Financial Analyst",
-        "HR Analyst",
-        "Cost Analyst",
-        "Operations Analyst",
-        "Marketing Analyst"
-      ].map((course, index) => (
-
-        <motion.div
-          key={course}
-          className="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:border-green-400 hover:shadow-md transition-all"
-          initial={{ opacity:0 , y:20 }}
-          whileInView={{ opacity:1 , y:0 }}
-          transition={{ duration:0.4 , delay:index*0.1 }}
-        >
-
-          <div className="flex items-center gap-3">
-
-            <div className="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
-              <BookOpen className="w-5 h-5"/>
-            </div>
-
-            <h4 className="font-semibold text-gray-800 text-lg">
-              {course}
-            </h4>
-
-          </div>
-
-        </motion.div>
-
-      ))}
-
-    </div>
-
-  </div>
-</section>
-
-    {/* Self Paced Courses */}
-<section className="py-20 bg-gradient-to-b from-slate-50 to-white">
-
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-    {/* Heading */}
-    <div className="text-center mb-14">
-
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Self-Paced{" "}
-              <span className="bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
-                Courses
-              </span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Learn anytime, anywhere with our flexible self-paced courses designed for working professionals and students.
-            </p>
-
-    </div>
-
-
-    {/* Courses Grid */}
-{/* Courses Grid */}
-<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-5xl mx-auto">
-
-  {[
-    {name:"Advance Excel",icon:"📊"},
-    {name:"SQL",icon:"🗃️"},
-    {name:"Power BI",icon:"📈"},
-    {name:"Tableau",icon:"🎨"},
-    {name:"Python",icon:"🐍"},
-  ].map((course,index)=>(
-
-    <motion.div
-      key={course.name}
-      className="group relative bg-white rounded-2xl p-6 text-center border border-gray-200 
-      hover:border-green-500 hover:shadow-2xl transition-all duration-300 cursor-pointer"
-      
-      whileHover={{ y:-8, scale:1.05 }}
-      initial={{opacity:0,y:20}}
-      whileInView={{opacity:1,y:0}}
-      transition={{duration:0.4,delay:index*0.1}}
-    >
-
-      {/* Glow Background */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 opacity-0 group-hover:opacity-40 transition blur-xl"></div>
-
-      {/* Icon Circle */}
-      <div className="relative w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full 
-      bg-gradient-to-r from-green-100 to-emerald-100 text-2xl 
-      group-hover:from-green-600 group-hover:to-emerald-700 
-      group-hover:text-white transition">
-
-        {course.icon}
-
-      </div>
-
-      {/* Course Name */}
-      <h4 className="relative font-semibold text-gray-800 group-hover:text-green-700 transition">
-        {course.name}
-      </h4>
-
-    </motion.div>
-
-  ))}
-
-</div>
-
-
-    {/* Explore Button */}
-    <div className="mt-12 max-w-5xl mx-auto">
-
-      <Link
-        href="/courses/self-paced"
-        className="w-full flex justify-center items-center bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition"
-      >
-        Explore Course →
-      </Link>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-
-{/* Certificate Section */}
-<section className="bg-gradient-to-r from-green-800 to-emerald-800 mt-8 mb-8 bg-clip-text text-transparent">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-    {/* Heading */}
-    <div className="text-center mb-12">
-         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Get Your{" "}
-              <span className="bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
-                Certificate
-              </span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Receive a verified certificate upon successful completion of your course and final project.
-            </p>
+      </p>
     </div>
 
     {/* Main Layout */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-33 items-center">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
       {/* Certificate Image - Left Side (unchanged) */}
       <motion.div
@@ -502,7 +342,7 @@ const CoursesPage = () => {
         viewport={{ once: true }}
         className="flex justify-center"
       >
-        <div className="relative bg-white rounded-2xl shadow-xl border border-gray-200 p-4 max-w-md mt-20 w-full">
+        <div className="relative bg-white rounded-2xl shadow-xl border border-gray-200 p-4 max-w-md w-full">
           <img
             src="/certificate.png"
             alt="GogalEdu Course Certificate"
