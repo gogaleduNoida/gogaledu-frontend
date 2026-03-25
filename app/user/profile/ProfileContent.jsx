@@ -14,6 +14,8 @@ export default function ProfilePage() {
     const [imgError, setImgError] = useState(false);
     const [successPopup, setSuccessPopup] = useState(false)
     const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [courses, setCourses] = useState([])
+
 
     const statusColor = {
         verified: "bg-green-100 text-green-700",
@@ -61,6 +63,16 @@ export default function ProfilePage() {
         </svg>
     )
 
+    const getReceiptUrl = (url) => {
+        if (!url) return null
+
+        if (url.startsWith("/")) {
+            return `${process.env.NEXT_PUBLIC_API_URL}${url}`
+        }
+        
+        return `${process.env.NEXT_PUBLIC_API_URL}/${url}`
+    }
+
     useEffect(() => {
 
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
@@ -79,7 +91,13 @@ export default function ProfilePage() {
                     address: data.address || ""
                 })
             })
-
+        
+        // COURSE FETCH
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/my-courses`, {
+            credentials: 'include'
+        })
+            .then(res => res.json())
+            .then(data => setCourses(data.courses))
     }, [])
 
     const handleLogout = async () => {
@@ -351,6 +369,93 @@ export default function ProfilePage() {
 
                 </motion.div>
 
+                <motion.div
+                    className="bg-white shadow-xl rounded-2xl p-6 mt-10"
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <h2 className="text-xl font-bold mb-4">📚 Course Details</h2>
+
+                    {courses.length > 0 ? (
+                        courses.map((course, i) => {
+
+                            const receiptLink = getReceiptUrl(course.receipt_url)
+
+                            return (
+                                <div
+                                    key={i}
+                                    className="flex flex-col md:flex-row md:justify-between md:items-center border p-4 rounded-xl mb-3 hover:shadow-md transition gap-3"
+                                >
+
+                                    {/* LEFT SIDE */}
+                                    <div>
+                                        <p className="font-semibold text-base">
+                                            {course.title} | ₹{course.amount}
+                                        </p>
+
+                                        <p className="text-xs text-gray-500">
+                                            {new Date(course.enrollment_date).toLocaleDateString()}
+                                        </p>
+
+                                        {/* STATUS BADGE */}
+                                        <span className={`text-xs px-2 py-1 rounded-full mt-2 inline-block ${course.payment_status === "paid"
+                                                ? "bg-green-100 text-green-600"
+                                                : "bg-red-100 text-red-600"
+                                            }`}>
+                                            {course.payment_status?.toUpperCase() || "NO PAYMENT"}
+                                        </span>
+                                    </div>
+
+                                    {/* RIGHT SIDE BUTTONS */}
+                                    <div className="flex gap-3 flex-wrap">
+
+                                        {/* INVOICE BUTTON */}
+                                        {receiptLink ? (
+                                            <motion.a
+                                                href={receiptLink}
+                                                target="_blank"
+                                                className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-md"
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                Download Invoice
+                                            </motion.a>
+                                        ) : (
+                                            <span className="text-gray-400 text-sm flex items-center">
+                                                No Invoice
+                                            </span>
+                                        )}
+
+                                        {/* VIEW COURSE */}
+                                        <motion.button
+                                            onClick={() => router.push(`/courses/${course.slug}`)}
+                                            className="bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-md"
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            View Course
+                                        </motion.button>
+
+                                    </div>
+                                </div>
+                            )
+                        })
+                    ) : (
+                        <p className="text-gray-400">No course enrolled</p>
+                    )}
+                </motion.div>
+
+                <motion.div
+                    className="bg-white shadow-xl rounded-2xl p-6 mt-6"
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <h2 className="text-xl font-bold mb-4">🎓 Certificate</h2>
+
+                    <p className="text-gray-400">
+                        Certificates will be available soon 🚀
+                    </p>
+                </motion.div>
             </div>
 
         </div>
