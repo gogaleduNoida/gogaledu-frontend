@@ -1,7 +1,7 @@
 // app/courses/[slug]/page.jsx
 'use client';
 
-import { use } from 'react';
+import {usestate, use } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { CourseData } from '@/db/CourseData';
