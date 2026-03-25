@@ -100,6 +100,13 @@ const Navbar = () => {
     { name: "Contact Us", href: "/contact" },
   ];
 
+  const getProfileRoute = () => {
+    if (role === "user") return "/user/profile";
+    if (role === "admin") return "/admin";
+    if (role === "employee") return "/employee";
+    return "/";
+  };
+
   const mobileMenuVariants = {
     closed: {
       x: "100%",
@@ -193,40 +200,27 @@ const Navbar = () => {
 
           <div className="hidden lg:flex items-center space-x-3 ml-auto">
             {username ? (
-              role === "user" ? (
-                <Link
-                  href="/user/profile">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-sm font-medium text-gray-700">
-                      {username?.toUpperCase()}
-                    </span>
-
-                    {role === "user" && profile?.profile_photo && !imgError ? (
-                      <div className="flex items-center gap-6">
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${profile.profile_photo}`}
-                          className="w-9 h-9 rounded-full object-cover"
-                          onError={() => setImgError(true)}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-9 h-9 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
-                        {username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ) : (
-                <div className="flex items-center space-x-3 cursor-default">
+              <Link href={getProfileRoute()}>
+                <div className="flex items-center space-x-3 cursor-pointer">
                   <span className="text-sm font-medium text-gray-700">
                     {username?.toUpperCase()}
                   </span>
 
-                  <div className="w-9 h-9 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    {username?.charAt(0).toUpperCase()}
-                  </div>
+                  {role === "user" && profile?.profile_photo && !imgError ? (
+                    <div className="flex items-center gap-6">
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${profile.profile_photo}`}
+                        className="w-9 h-9 rounded-full object-cover"
+                        onError={() => setImgError(true)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-9 h-9 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
+                      {username?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                 </div>
-              )
+              </Link>
             ) : (
               <>
                 <Link
