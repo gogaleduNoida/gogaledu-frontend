@@ -259,7 +259,7 @@ const SignupPage = () => {
               />
               <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
                 I agree to the{' '}
-                <Link href="/terms" className="text-green-600 hover:text-green-700">
+                <Link href="/terms-conditions" className="text-green-600 hover:text-green-700">
                   Terms and Conditions
                 </Link>
               </label>
