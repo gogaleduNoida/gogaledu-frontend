@@ -61,7 +61,7 @@ const ContactPage = () => {
     {
       icon: MapPin,
       title: "Address",
-      content: "Unit B-7 Crystaa Tower, C-30, C Block, Sector 63, Noida 201309",
+      content: "C Block, Sector 63, Noida 201309",
       link: null,
     },
     {
