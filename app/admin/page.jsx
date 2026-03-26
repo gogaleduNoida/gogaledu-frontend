@@ -6,6 +6,7 @@ import UsersTable from "./components/UsersTable"
 import StudentsTable from "./components/StudentsTable"
 import EmployeesTable from "./components/EmployeesTable"
 import CreateEmployee from "./components/CreateEmployee"
+import CreateCertificates from "./components/CreateCertificates"
 import { Lock } from 'lucide-react';
 import ChangePasswordModal from "@/components/ChangePasswordModal";
 
@@ -43,7 +44,6 @@ export default function AdminDashboard() {
 
         window.location.href = "/login";
     };
-
 
     useEffect(() => {
 
@@ -140,13 +140,23 @@ export default function AdminDashboard() {
                     </motion.button>
 
                     <motion.button
-                        onClick={() => setTab("create")}
+                        onClick={() => setTab("create-employee")}
                         className="px-4 py-2 bg-gray-900 text-white rounded
                     hover:bg-black disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center space-x-2"
                         whileHover={{ scale: isLoading ? 1 : 1.02 }}
                         whileTap={{ scale: isLoading ? 1 : 0.98 }}
                     >
                         Create Employee
+                    </motion.button>
+
+                    <motion.button
+                        onClick={() => setTab("create-certificates")}
+                        className="px-4 py-2 bg-gray-900 text-white rounded
+                    hover:bg-black disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center space-x-2"
+                        whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                        whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                    >
+                        Create Certificates
                     </motion.button>
                 </div>
             </div>
@@ -160,7 +170,9 @@ export default function AdminDashboard() {
 
             {tab === "employees" && <EmployeesTable employees={data.employees} />}
 
-            {tab === "create" && <CreateEmployee />}
+            {tab === "create-employee" && <CreateEmployee />}
+
+            {tab === "create-certificates" && <CreateCertificates />}
 
         </div>
     )
