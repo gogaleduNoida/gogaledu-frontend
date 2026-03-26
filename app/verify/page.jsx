@@ -3,17 +3,15 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  CheckCircle, 
-  XCircle, 
-  Download,
+import {
+  Search,
+  CheckCircle,
+  XCircle,
   Shield,
   FileText,
   User,
   Calendar,
   Award,
-  BookOpen,
   Mail
 } from 'lucide-react';
 
@@ -23,59 +21,38 @@ const CertificateVerificationPage = () => {
   const [verificationResult, setVerificationResult] = useState(null);
   const [searchPerformed, setSearchPerformed] = useState(false);
 
-  // Mock certificate data - in real app, this would come from API
-  const mockCertificateData = {
-    id: 'GOGAL2024001',
-    studentName: 'Rahul Sharma',
-    courseName: 'Advanced Data Analytics & Business Intelligence',
-    completionDate: '15 December 2024',
-    issueDate: '20 December 2024',
-    skills: [
-      'Data Analysis',
-      'Python Programming',
-      'SQL Database',
-      'Power BI',
-      'Machine Learning',
-      'Statistical Analysis',
-      'Data Visualization'
-    ],
-    status: 'Verified',
-    grade: 'A+',
-    instructor: 'Deepak Gogal',
-    isValid: true
-  };
-
   const handleVerify = async (e) => {
     e.preventDefault();
-    
-    if (!certificateId.trim()) {
-      return;
-    }
+
+    if (!certificateId.trim()) return;
 
     setIsVerifying(true);
     setSearchPerformed(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock verification logic
-    if (certificateId.toUpperCase() === 'GOGAL2024001') {
-      setVerificationResult({
-        success: true,
-        data: mockCertificateData,
-        message: 'Certificate verified successfully!'
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/verify-certificate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          certificate_id: certificateId
+        })
       });
-    } else {
+
+      const data = await res.json();
+      setVerificationResult(data);
+
+    } catch (error) {
       setVerificationResult({
         success: false,
-        data: null,
-        message: 'Certificate not found. Please check the Certificate ID and try again.'
+        message: "Server error. Please try again."
       });
     }
-    
+
     setIsVerifying(false);
   };
-
+  
   const handleReset = () => {
     setCertificateId('');
     setVerificationResult(null);
@@ -218,14 +195,11 @@ const CertificateVerificationPage = () => {
                     variants={itemVariants}
                   >
                     <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle className="w-10 h-10 text-green-600" />
+                      <CheckCircle className="w-10 h-10 text-green-600" size={50}/>
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
                       Certificate Verified!
                     </h3>
-                    <p className="text-green-600 font-semibold">
-                      {verificationResult.message}
-                    </p>
                   </motion.div>
 
                   {/* Certificate Details */}
@@ -248,10 +222,6 @@ const CertificateVerificationPage = () => {
                             <span className="text-sm text-gray-600">Full Name:</span>
                             <p className="font-semibold text-gray-900">{verificationResult.data.studentName}</p>
                           </div>
-                          <div>
-                            <span className="text-sm text-gray-600">Certificate ID:</span>
-                            <p className="font-semibold text-green-600">{verificationResult.data.id}</p>
-                          </div>
                         </div>
                       </div>
 
@@ -264,14 +234,6 @@ const CertificateVerificationPage = () => {
                           <div>
                             <span className="text-sm text-gray-600">Course:</span>
                             <p className="font-semibold text-gray-900">{verificationResult.data.courseName}</p>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-600">Grade:</span>
-                            <p className="font-semibold text-gray-900">{verificationResult.data.grade}</p>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-600">Instructor:</span>
-                            <p className="font-semibold text-gray-900">{verificationResult.data.instructor}</p>
                           </div>
                         </div>
                       </div>
@@ -289,12 +251,9 @@ const CertificateVerificationPage = () => {
                         </h4>
                         <div className="space-y-3">
                           <div>
-                            <span className="text-sm text-gray-600">Completion Date:</span>
-                            <p className="font-semibold text-gray-900">{verificationResult.data.completionDate}</p>
-                          </div>
-                          <div>
                             <span className="text-sm text-gray-600">Issue Date:</span>
-                            <p className="font-semibold text-gray-900">{verificationResult.data.issueDate}</p>
+                            <span className="inline-flex font-semibold text-gray-900 pl-1">
+                              {verificationResult.data.createdAt}</span>
                           </div>
                           <div>
                             <span className="text-sm text-gray-600">Status:</span>
@@ -302,23 +261,6 @@ const CertificateVerificationPage = () => {
                               {verificationResult.data.status}
                             </span>
                           </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
-                        <h4 className="font-semibold text-gray-900 mb-4 text-lg flex items-center">
-                          <BookOpen className="w-5 h-5 mr-2 text-purple-600" />
-                          Skills Acquired
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {verificationResult.data.skills.map((skill, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-gray-700 border border-purple-200"
-                            >
-                              {skill}
-                            </span>
-                          ))}
                         </div>
                       </div>
                     </motion.div>
@@ -329,14 +271,6 @@ const CertificateVerificationPage = () => {
                     className="flex flex-col sm:flex-row gap-4 justify-center"
                     variants={itemVariants}
                   >
-                    <motion.button
-                      className="flex items-center justify-center space-x-2 bg-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors duration-300"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Download className="w-5 h-5" />
-                      <span>Download Certificate</span>
-                    </motion.button>
                     <motion.button
                       onClick={handleReset}
                       className="flex items-center justify-center space-x-2 bg-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors duration-300"
