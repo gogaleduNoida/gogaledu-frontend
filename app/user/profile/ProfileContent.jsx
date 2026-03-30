@@ -312,11 +312,11 @@ export default function ProfilePage() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex gap-2 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-3 sm:mt-0">
                 <motion.button
                   onClick={() => setShowPasswordModal(true)}
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200 hover:bg-blue-100 transition"
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200 hover:bg-blue-100 transition"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Change Password</span>
@@ -324,7 +324,8 @@ export default function ProfilePage() {
                 <motion.button
                   onClick={handleLogout}
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition"
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition"
+
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Logout</span>
