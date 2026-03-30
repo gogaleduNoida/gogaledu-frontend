@@ -309,31 +309,75 @@ const Navbar = () => {
 
                 {/* Navigation Items - Scrollable area */}
                 <div className="flex-1 overflow-y-auto">
-                  <div className="space-y-1 p-4">
-                    {navItems.map((item, index) => (
-                      <motion.div
-                        key={item.name}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <Link
-                          href={item.href}
-                          className="block py-3 px-4 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium rounded-lg transition-all duration-200 group"
-                          onClick={handleLinkClick}
-                        >
-                          <span className="flex items-center">
-                            {item.name}
-                            <span className="ml-auto h-0.5 w-0 bg-green-600 transition-all duration-300 group-hover:w-6" />
-                          </span>
-                        </Link>
-                      </motion.div>
-                    ))}
-                  </div>
+                 <div className="space-y-1 p-4">
+  {navItems.map((item, index) => (
+    <motion.div
+      key={item.name}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1 }}
+    >
+      <Link
+        href={item.href}
+        className="block py-3 px-4 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium rounded-lg transition-all duration-200 group"
+        onClick={handleLinkClick}
+      >
+        <span className="flex items-center">
+          {item.name}
+          <span className="ml-auto h-0.5 w-0 bg-green-600 transition-all duration-300 group-hover:w-6" />
+        </span>
+      </Link>
+    </motion.div>
+  ))}
+
+  {/* ✅ ADD THIS (Buttons just below Contact Us) */}
+  <div className="mt-3 pt-3 border-t border-gray-200 space-y-3">
+    {username ? (
+      <Link href={getProfileRoute()} onClick={handleLinkClick}>
+        <div className="flex items-center space-x-3 px-4 py-3 bg-green-50 rounded-lg cursor-pointer">
+          {role === "user" && profile?.profile_photo && !imgError ? (
+            <img
+              src={`${process.env.NEXT_PUBLIC_API_URL}${profile.profile_photo}`}
+              className="w-9 h-9 rounded-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="w-9 h-9 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold">
+              {username?.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <span className="font-medium text-gray-800">
+            {username}
+          </span>
+        </div>
+      </Link>
+    ) : (
+      <>
+        <Link
+          href="/signup"
+          onClick={handleLinkClick}
+          className="w-full py-3 px-4 text-gray-700 font-medium rounded-lg border border-gray-300 hover:border-green-500 hover:bg-green-50 transition-all duration-200 flex items-center justify-center"
+        >
+          <User className="w-4 h-4 mr-2" />
+          Sign Up
+        </Link>
+
+        <Link
+          href="/login"
+          onClick={handleLinkClick}
+          className="w-full py-3 px-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center justify-center"
+        >
+          <LogIn className="w-4 h-4 mr-2" />
+          Login
+        </Link>
+      </>
+    )}
+  </div>
+</div>
                 </div>
 
                 {/* Mobile Buttons - Fixed at bottom */}
-                <div className="p-6 border-t border-gray-100 bg-white space-y-3 shrink-0">
+                {/* <div className="p-6 border-t border-gray-100 bg-white space-y-3 shrink-0">
                   {username ? (
                     <div className="space-y-3">
                       <div className="flex items-center justify-center space-x-3">
@@ -367,7 +411,7 @@ const Navbar = () => {
                     </>
                   )}
 
-                </div>
+                </div> */}
               </motion.div>
             </>
           )}
