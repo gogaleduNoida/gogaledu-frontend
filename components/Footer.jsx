@@ -166,8 +166,7 @@ const Footer = () => {
               >
                 <MapPin className="w-5 h-5 text-green-600 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
                 <p className="text-gray-600 text-sm leading-tight group-hover:text-green-700 transition-colors">
-                  Unit B-7 Crystaa Tower, C-30, C Block, Sector 63,<br />
-                  Noida 201309
+                  C Block, Sector 63, Noida 201309
                 </p>
               </motion.div>
 
