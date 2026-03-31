@@ -482,8 +482,8 @@ const certCourses = [
 
                   {/* Price overlay bottom */}
                   <div className="absolute bottom-2 left-2 flex items-baseline gap-1.5">
-                    <span className="text-white font-bold text-sm">₹{course.discountPrice}</span>
-                    <span className="text-white/60 text-[11px] line-through">₹{course.price}</span>
+                    {/* <span className="text-white font-bold text-sm">₹{course.discountPrice}</span>
+                    <span className="text-white/60 text-[11px] line-through">₹{course.price}</span> */}
                   </div>
                 </div>
 
