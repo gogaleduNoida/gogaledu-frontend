@@ -725,6 +725,73 @@ const certCourses = [
         </div>
       </section>
 
+       <section className="py-16 sm:py-20 bg-gradient-to-br from-green-50 to-emerald-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+              What Our{" "}
+              <span className="bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">Students Say</span>
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto text-sm sm:text-base">
+              Real feedback from students who have completed our courses and transformed their careers.
+            </p>
+          </div>
+
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={stagger} initial="hidden" whileInView="show"
+            viewport={{ once: true, margin: "-40px" }}>
+            {[
+              {
+                name: "Rohit Singh",
+                role: "Business Analyst — Cognizant",
+                text: "The Advanced Excel course was extremely practical. I used the skills directly in my job within the first month.",
+                rating: 5,
+                course: "Advanced Excel"
+              },
+              {
+                name: "Priya Mehta",
+                role: "Business Intelligence Analyst - L&T",
+                text: "Power BI training was structured and detailed. The projects gave me real confidence to work independently.",
+                rating: 5,
+                course: "Power BI"
+              },
+              {
+                name: "Ankush Verma",
+                role: "Data Analyst — TCS",
+                text: "SQL course is one of the best investments I made. The window functions module alone got me placed.",
+                rating: 5,
+                course: "SQL for Data Analytics"
+              },
+            ].map((t) => (
+              <motion.div key={t.name} variants={fadeUp}
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+                <Quote size={24} className="text-green-200 mb-3" />
+                <p className="text-sm text-gray-600 leading-relaxed mb-5">"{t.text}"</p>
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} size={13} className="text-yellow-400 fill-yellow-400" />
+                  ))}
+                </div>
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm flex-shrink-0">
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{t.name}</p>
+                    <p className="text-xs text-gray-500">{t.role}</p>
+                  </div>
+                  <span className="ml-auto text-[10px] bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">
+                    {t.course}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-12 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
