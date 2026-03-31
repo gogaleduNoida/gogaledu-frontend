@@ -554,108 +554,108 @@ const certCourses = [
         </div>
       </section>
 
-<section className="py-5 lg:py-6 bg-white/80 backdrop-blur-sm">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+ <section className="py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    {/* Heading */}
-    <div className="text-center mb-12">
-      <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
-        Get Your <span className="text-green-600">Certificate</span>
-      </h3>
-      <p className="text-gray-600 max-w-xl mx-auto mt-2">
-        Receive a verified certificate upon successful completion of your course and final project.
-      </p>
-    </div>
-
-    {/* Main Layout */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-
-      {/* Certificate Image - Left Side (unchanged) */}
-      <motion.div
-        initial={{ opacity: 0, x: -25 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-        className="flex justify-center"
-      >
-        <div className="relative bg-white rounded-2xl shadow-xl border border-gray-200 p-4 max-w-md w-full">
-          <img
-            src="/certificate.png"
-            alt="GogalEdu Course Certificate"
-            className="rounded-lg w-full object-contain"
-          />
-
-          {/* Floating Badge */}
-          <motion.div
-            className="absolute -top-3 -right-3 bg-green-600 text-white p-3 rounded-xl shadow-md"
-            animate={{ y: [0, -4, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            <Award className="w-5 h-5" />
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Enhanced Right Side - Self-Paced Courses */}
-      <motion.div
-        initial={{ opacity: 0, x: 25 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-        className="space-y-8"
-      >
-        {/* Header */}
-        <div className="text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-xl text-sm font-medium mb-4 border border-green-200">
-            <Clock className="w-4 h-4" />
-            <span>Learn at Your Own Pace</span>
+          {/* Heading */}
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Get Your{" "}
+              <span className="bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">Certificate</span>
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+              Receive a verified certificate upon successful completion of your course and final project.
+            </p>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-            Self-Paced <span className="text-green-600">Online Courses</span>
-          </h3>
-          <p className="text-gray-600 leading-relaxed">
-            These courses are available in self-paced online format and will grant a professional certificate after course completion and project submission.
-          </p>
-        </div>
 
-        {/* Courses Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            { name: "Advance Excel", icon: "📊", color: "from-blue-500 to-blue-600" },
-            { name: "SQL", icon: "🗃️", color: "from-orange-500 to-orange-600" },
-            { name: "Power BI", icon: "📈", color: "from-yellow-500 to-yellow-600" },
-            { name: "Tableau", icon: "🎨", color: "from-purple-500 to-purple-600" },
-            { name: "Python", icon: "🐍", color: "from-green-500 to-green-600" },
-          ].map((course, index) => (
+          {/* Main layout — stacked on mobile, 2-col on lg */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+
+            {/* Certificate image — left on desktop, top on mobile */}
             <motion.div
-              key={course.name}
-              className="group bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-green-300"
-              whileHover={{ y: -2 }}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 bg-gradient-to-r ${course.color} rounded-xl flex items-center justify-center text-white text-lg shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  {course.icon}
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{course.name}</h4>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <Award className="w-3.5 h-3.5 text-green-500" />
-                    <span className="text-xs text-gray-600 font-medium">Certificate Included</span>
-                  </div>
-                </div>
+              initial={{ opacity: 0, x: -25 }} whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }} viewport={{ once: true }}
+              className="flex justify-center order-1 lg:order-none">
+              <div className="relative bg-white rounded-2xl shadow-xl border border-gray-200 p-3 sm:p-4 w-full max-w-sm sm:max-w-md">
+                <img src="/certificate.png" alt="GogalEdu Course Certificate" className="rounded-lg w-full object-contain" />
+                <motion.div
+                  className="absolute -top-3 -right-3 bg-green-600 text-white p-2.5 sm:p-3 rounded-xl shadow-md"
+                  animate={{ y: [0, -4, 0] }} transition={{ duration: 3, repeat: Infinity }}>
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5" />
+                </motion.div>
               </div>
             </motion.div>
-          ))}
-        </div>
-      </motion.div>
 
-    </div>
-  </div>
-</section>
+            {/* Info — right on desktop, below image on mobile */}
+            <motion.div
+              className="space-y-5 sm:space-y-6 order-2 lg:order-none"
+              initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7 }} viewport={{ once: true }}>
+
+              <div className="space-y-3 sm:space-y-4">
+                <motion.div
+                  className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-full text-sm font-medium border border-green-200"
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+                  <Award className="w-4 h-4" />
+                  Get Certified
+                </motion.div>
+
+                <motion.h2
+                  className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight"
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }} viewport={{ once: true }}>
+                  Earn Your{" "}
+                  <span className="text-green-600">Professional Certificate</span>
+                </motion.h2>
+
+                <motion.p
+                  className="text-sm sm:text-base text-gray-600 leading-relaxed"
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }} viewport={{ once: true }}>
+                  Validate Your Skills with An Industry-Recognized Certificate that Enhances Your Resume and Opens Doors to Better Career Opportunities
+                </motion.p>
+              </div>
+
+              {/* Features list */}
+              <div className="space-y-2.5 sm:space-y-3">
+                {[
+                  "Industry Recognized Certification",
+                  "Digital & Printable Format",
+                  "Lifetime Validity",
+                  "Shareable on Professional Networks",
+                  "Verified by GogalEdu Academy",
+                  "Boosts Job Prospects",
+                ].map((feature, index) => (
+                  <motion.div key={feature}
+                    className="flex items-center gap-3 p-2.5 sm:p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-colors duration-200"
+                    initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }} viewport={{ once: true }}>
+                    <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700 font-medium text-xs sm:text-sm">{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+            </motion.div>
+          </div>
+
+          {/* Verify CTA */}
+          <motion.div className="w-full mt-10 sm:mt-12"
+            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }} viewport={{ once: true, margin: "-50px" }}>
+            <Link href="/verify" className="block w-full">
+              <motion.div
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3.5 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group cursor-pointer"
+                whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
+                <span>Verify Your Certificate</span>
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
+              </motion.div>
+            </Link>
+          </motion.div>
+
+        </div>
+      </section>
 
 
       {/* Features Section */}
