@@ -29,8 +29,8 @@ const Footer = () => {
 
   const quickLinks = [
     { name: 'Admission Partner Portal', href: 'https://app.gogaledu.com/auth/login', icon: UserPlus },
-    { name: 'Franchise Partner', href: '/franchise-partner', icon: Store },
-    { name: 'New Center Application', href: '/new-center', icon: Building2 },
+    // { name: 'Franchise Partner', href: '/franchise-partner', icon: Store },
+    // { name: 'New Center Application', href: '/new-center', icon: Building2 },
     { name: 'Career', href: '/careers', icon: Briefcase },
     { name: 'Certificate Verification', href: '/verify', icon: Award },
   ];
