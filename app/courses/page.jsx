@@ -21,6 +21,7 @@ import {
   Users2,
   Award,
   Download,
+  Quote,
 } from "lucide-react";
 import { CourseData } from "@/db/CourseData";
 import { spcourses } from "@/db/spcourses";
