@@ -1,56 +1,11 @@
-// app/courses/self-paced/[slug]/page.jsx
-
-// ─────────────────────────────────────────────────────────────────
-// Course Detail Page — handles ANY course from db/spcourses.js
-//
-// URL PATTERN: /courses/self-paced/[slug]
-//   e.g. /courses/self-paced/advance-excel
-//
-// ── WATCH-TIME PROGRESS (KEY CHANGE) ────────────────────────────
-//   lessonProgress stores ACCUMULATED real watch time (seconds),
-//   NOT the highest video position reached. This means scrubbing
-//   or seeking to the end does NOT count as "watched."
-//   A 60-second video requires 60 real seconds of playback.
-//
-//   lessonProgress shape:
-//   {
-//     "/videos/excel-m1-l1.mp4": {
-//       watched:  45,    ← accumulated real watch seconds
-//       position: 50,    ← last seek position (for resume)
-//       duration: 60     ← total video duration
-//     }
-//   }
-//
-// ── LOCKING LOGIC ────────────────────────────────────────────────
-//   • First 3 lessons (globalIdx 0,1,2) are always unlocked (free preview)
-//   • Lesson N+1 unlocks when Lesson N has watched >= duration - 0.5s
-//   • Module N+1 first lesson unlocks only after Module N quiz is passed
-//   • If Module N has NO quiz, the first lesson of Module N+1 unlocks
-//     as soon as the last lesson of Module N is fully watched
-//
-// ── PROGRESS BAR ─────────────────────────────────────────────────
-//   Progress % = (sum of min(watched, duration) per lesson) / totalDuration × 100
-//   This caps each lesson at 100% even if replayed multiple times.
-//
-// ── FEE REFUND UNLOCK CONDITIONS ─────────────────────────────────
-//   All four must be true before the "Request Refund" button unlocks:
-//   1. All lessons are completed (watched fully)
-//   2. All module quizzes are passed (≥60%)
-//   3. All projects are uploaded
-//   4. All projects are marked "accepted" (green) by admin
-//
-// ── PROJECT STATE ────────────────────────────────────────────────
-//   Lifted to this page so both ProjectsSection and FeeRefundSection
-//   share the same source of truth.
-// ─────────────────────────────────────────────────────────────────
-
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { spcourses } from "@/db/spcourses";
-import CourseHero from "@/components/CourseHero";
+
+// import CourseHero from "@/components/CourseHero";
 import VideoPlayer from "@/components/VideoPlayer";
 import Quiz from "@/components/Quiz";
 import ProjectsSection from "@/components/ProjectsSection";
@@ -61,7 +16,7 @@ import {
   BookOpen, Lock, Play, ChevronDown, ChevronUp,
   CheckCircle2, Clock, Target, Award, Wrench,
   CircleCheck, BookMarked, GraduationCap, Zap,
-  BarChart3, Code2, Database, FileText, Star
+  BarChart3, Code2, Database, FileText, Star, Users, PlayCircle, ShieldCheck, Wifi
 } from "lucide-react";
 
 // ── Icon map for overview cards ──────────────────────────────────
@@ -113,35 +68,93 @@ const keys = {
 
 export default function CourseDetailPage() {
 
-  const { slug } = useParams();
-  const course   = spcourses?.[slug];
+  const { slug } = useParams(); 
+  console.log("slug:", slug);
+  const router = useRouter();
+  // const course = spcourses?.[slug];
+  // console.log(course)
+  
+  // ================= AUTH STATE =================
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadData = async () => {
+      const foundcourse = spcourses?.[slug];
+      setCourse(foundcourse);
+
+      const auth = await checkAuth();   // check auth on page load
+      setIsAuthenticated(auth);
+
+      setLoading(false);
+    };
+    loadData();
+  }, [slug]);
+
+  // ================= AUTH CHECK =================
+  const checkAuth = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/check-auth`, {
+        method: "GET",
+        credentials: "include"
+      });
+
+      if (!res.ok) return false;
+
+      const data = await res.json();
+      return data?.authenticated === true;
+
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      return false;
+    }
+  };
+
+  // ================= ENROLL HANDLER =================
+  const handleEnroll = async () => {
+
+    const auth = await checkAuth();
+
+    if (!auth) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
+        method: "GET",
+        credentials: "include"
+      });
+
+      const user = await res.json();
+
+      if (!user?.profile_completed) {
+        router.push(`/user/profile?course=${slug}`);
+        return;
+      }
+      console.log("Going to:", slug);
+      router.push(`/sp-course-confirmation/${slug}`);
+
+    } catch (err) {
+      console.error("Enroll failed:", err);
+    }
+  };
 
   // ── UI STATE ────────────────────────────────────────────────────
   const [tab,          setTab]          = useState("overview");
   const [openModule,   setOpenModule]   = useState(0);
   const [activeVideo,  setActiveVideo]  = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
-  // videoKey increments every time Play/Replay is clicked — even for the
-  // same video. This forces VideoPlayer to fully remount so the <video>
-  // element is fresh. Without this, clicking Replay on a just-finished
-  // video does nothing because setActiveVideo(same_path) triggers no
-  // state change, leaving the ended video element in its black/stale state.
   const [videoKey,     setVideoKey]     = useState(0);
 
   // ── PROGRESS STATE ──────────────────────────────────────────────
-  // lessonProgress: { videoPath: { watched, position, duration } }
   const [lessonProgress,   setLessonProgress]   = useState({});
-  // completedLessons: [videoPath, ...] — lessons where watched ≥ duration - 0.5
   const [completedLessons, setCompletedLessons] = useState([]);
-  // passedQuizzes: [moduleIndex, ...] — modules with quiz score ≥ 60%
   const [passedQuizzes,    setPassedQuizzes]    = useState([]);
-  // quizScores: { moduleIndex: score% } — passing score per module (for badge display)
   const [quizScores,       setQuizScores]       = useState({});
-
-  // ── PROJECT STATE (lifted here so FeeRefundSection can read it) ─
-  // projectStatuses: { projectId: "pending" | "accepted" | "rejected" }
   const [projectStatuses, setProjectStatuses] = useState({});
-  // projectUploads: { projectId: fileName } — files uploaded by student
   const [projectUploads,  setProjectUploads]  = useState({});
 
   // ── LOAD ALL SAVED STATE FROM LOCALSTORAGE ──────────────────────
@@ -220,9 +233,6 @@ export default function CourseDetailPage() {
     );
   }, [course]);
 
-  // ── PROGRESS PERCENTAGE ──────────────────────────────────────────
-  // Sum of min(watched, duration) per lesson / totalDuration × 100
-  // Caps each lesson at 100% even if replayed multiple times.
   const progress = useMemo(() => {
     if (totalDuration <= 0) return 0;
     const totalWatched = Object.values(lessonProgress).reduce(
@@ -232,15 +242,6 @@ export default function CourseDetailPage() {
     return Math.min((totalWatched / totalDuration) * 100, 100);
   }, [lessonProgress, totalDuration]);
 
-  // ── LESSON LOCK CHECK ────────────────────────────────────────────
-  // Returns true if the lesson should be locked (not playable yet).
-  //
-  // Rules:
-  //  1. globalIdx < 3  → always unlocked (free preview)
-  //  2. Previous lesson must be completed (watched ≥ duration - 0.5s)
-  //  3. First lesson of a new module:
-  //       - if previous module HAS a quiz → quiz must be passed
-  //       - if previous module has NO quiz → just previous lesson completion
   const isLessonLocked = useCallback((moduleIndex, lessonIndex) => {
     if (!course?.curriculum) return true;
 
@@ -260,10 +261,6 @@ export default function CourseDetailPage() {
       return true;
     }
 
-    // First lesson of a new module — check previous module quiz
-    // IMPORTANT: Only block if the previous module actually HAS a quiz.
-    // The free preview module has no quiz, so Module 1 first lesson
-    // only requires the last free preview lesson to be watched.
     if (lessonIndex === 0 && moduleIndex > 0) {
       const prevModule = course.curriculum[moduleIndex - 1];
       const prevHasQuiz = prevModule?.quiz && prevModule.quiz.length > 0;
@@ -428,17 +425,238 @@ export default function CourseDetailPage() {
     );
   }
 
+  const hero = course?.hero;
+  if (!hero) return null;
+
+  const progressClamped = Math.min(Math.max(progress, 0), 100);
+
+  const ICON_MAP = {
+    target: <Target className="w-4 h-4" />,
+    clock: <Clock className="w-4 h-4" />,
+    online: <PlayCircle className="w-4 h-4" />,
+    award: <Award className="w-4 h-4" />,
+    wifi: <Wifi className="w-4 h-4" />
+  };
+
+  // Tag pill colors — cycles by index
+  const TAG_COLORS = [
+    "bg-green-100  text-green-700",
+    "bg-blue-100   text-blue-700",
+    "bg-purple-100 text-purple-700",
+    "bg-amber-100  text-amber-700"
+  ];
+
   // ─────────────────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* ── HERO ──────────────────────────────────────────────────
-          CourseHero reads from course.hero in spcourses.js.
-          `progress` is passed so the bar updates in real-time.
-      ─────────────────────────────────────────────────────────── */}
-      <CourseHero course={course} progress={progress} />
+      <section className="pt-28 pb-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-3 gap-10">
+
+          {/* ── LEFT SIDE ──────────────────────────────────────────── */}
+          <div className="lg:col-span-2">
+            <div className="flex flex-wrap gap-2 mb-5">
+              {hero.tags?.map((tag, i) => (
+                <span
+                  key={i}
+                  className={`flex items-center gap-1.5 whitespace-nowrap ${TAG_COLORS[i % TAG_COLORS.length]} px-4 py-1 rounded-full text-sm font-medium`}
+                >
+                  {ICON_MAP[tag.icon] || <Target className="w-4 h-4" />}
+                  {tag.label}
+                </span>
+              ))}
+            </div>
+
+            {/* ── COURSE TITLE ──────────────────────────────────────────
+              Defined in spcourses.js → hero.title
+          ─────────────────────────────────────────────────────────── */}
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              {hero.title}
+            </h1>
+
+            {/* ── SUBTITLE ──────────────────────────────────────────────
+              Defined in spcourses.js → hero.subtitle
+          ─────────────────────────────────────────────────────────── */}
+            <p className="text-gray-600 text-lg mb-8 max-w-xl leading-relaxed">
+              {hero.subtitle}
+            </p>
+
+            {/* ── STATS CARDS ───────────────────────────────────────────
+              Values defined in spcourses.js → hero.stats
+          ─────────────────────────────────────────────────────────── */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
+              {/* Rating */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border text-center">
+                <div className="text-xl font-bold text-gray-900">{hero.stats.rating}</div>
+                <div className="flex justify-center text-yellow-400 my-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={15} fill="currentColor" />
+                  ))}
+                </div>
+                <p className="text-xs font-medium text-gray-500">Student Rating</p>
+              </div>
+
+              {/* Students */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border text-center">
+                <div className="text-xl font-bold text-gray-900">{hero.stats.students}</div>
+                <Users className="mx-auto text-green-600 my-1" size={18} />
+                <p className="text-xs font-medium text-gray-500">Students Enrolled</p>
+              </div>
+
+              {/* Projects */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border text-center">
+                <div className="text-xl font-bold text-gray-900">{hero.stats.projects}</div>
+                <Target className="mx-auto text-green-600 my-1" size={18} />
+                <p className="text-xs font-medium text-gray-500">Projects</p>
+              </div>
+
+              {/* Guarantee */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border text-center">
+                <div className="text-xl font-bold text-gray-900">{hero.stats.guarantee}</div>
+                <ShieldCheck className="mx-auto text-green-600 my-1" size={18} />
+                <p className="text-xs font-medium text-gray-500">Fee Return Guarantee</p>
+              </div>
+            </div>
+
+            {/* ── PROGRESS BAR ──────────────────────────────────────────
+              Calculated in page.jsx based on REAL accumulated watch time.
+              Does NOT increase by scrubbing — only by actual playback.
+              Updates in real-time as student watches.
+          ─────────────────────────────────────────────────────────── */}
+            <div className="bg-white p-5 rounded-xl border shadow-sm">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-gray-800 text-sm">Course Progress</span>
+                <span className="text-green-600 font-bold text-sm">
+                  {progressClamped.toFixed(1)}% Complete
+                </span>
+              </div>
+              <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-3 bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-700"
+                  style={{ width: `${progressClamped}%` }}
+                />
+              </div>
+              {progressClamped === 100 && (
+                <p className="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
+                  <Award size={13} />
+                  Course Complete! Your Microsoft Certified Certificate is ready.
+                </p>
+              )}
+            </div>
+
+            {/* ── COURSE FEATURE BADGES ─────────────────────────────────
+              Only shown for features that are true in spcourses.js
+              IMPORTANT: "Lifetime Access" is intentionally excluded.
+              `details.lifetimeAccess` is false in this course.
+          ─────────────────────────────────────────────────────────── */}
+            <div className="flex flex-wrap gap-3 mt-5">
+              {course.details?.certificate && (
+                <span className="flex items-center gap-1.5 text-xs bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full">
+                  <Award size={13} className="text-green-600" />
+                  Microsoft Certified Certificate
+                </span>
+              )}
+              {/* NOTE: lifetimeAccess badge is intentionally NOT rendered.
+                Do not add it back here. */}
+              {course.details?.mobileAccess && (
+                <span className="flex items-center gap-1.5 text-xs bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full">
+                  <Wifi size={13} className="text-green-600" />
+                  Mobile Accessible
+                </span>
+              )}
+              <span className="flex items-center gap-1.5 text-xs bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full">
+                <ShieldCheck size={13} className="text-green-600" />
+                100% Fee Return Guarantee
+              </span>
+            </div>
+          </div>
+
+          {/* ── RIGHT SIDE ENROLL CARD ───────────────────────────────── */}
+          <div>
+            <div className="bg-white rounded-2xl shadow-lg border overflow-hidden lg:sticky lg:top-24">
+
+              {/* Course image with discount badge */}
+              <div className="relative">
+                <img
+                  src={hero.image}
+                  alt={hero.title}
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+                {/* Image fallback */}
+                <div className="hidden w-full h-48 bg-gradient-to-br from-green-600 to-green-800 items-center justify-center">
+                  <BookOpen size={48} className="text-white/60" />
+                </div>
+
+                {hero.pricing.discount && (
+                  <div className="absolute top-3 right-3 bg-green-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                    {hero.pricing.discount}
+                  </div>
+                )}
+              </div>
+
+              {/* ── PRICING ───────────────────────────────────────────────
+                Prices defined in spcourses.js → hero.pricing
+            ─────────────────────────────────────────────────────────── */}
+              <div className="p-6 text-center">
+                <div className="text-3xl font-bold text-green-600 mb-1">
+                  ₹{hero.pricing.discountPrice}
+                </div>
+                {hero.pricing.price && (
+                  <div className="text-gray-400 font-medium line-through text-sm mb-5">
+                    ₹{hero.pricing.price}
+                  </div>
+                )}
+
+                {/* Enroll button */}
+                <motion.button
+                  onClick={handleEnroll}
+                  className="w-full cursor-pointer bg-green-700 text-white py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-3"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <BookOpen className="w-5 h-5" />
+                  <span>Enroll Now</span>
+                </motion.button>
+
+                {/* NOTE: "30-Day Money-Back Guarantee" is intentionally removed.
+                  The refund model is: complete course → submit projects →
+                  get admin approval → request 100% refund (not a 30-day guarantee).
+                  Do not add it back here. */}
+              </div>
+
+              {/* ── WHAT YOU GET SUMMARY ──────────────────────────────────
+                Shows a quick bullet list of course benefits.
+                "Lifetime Access" is intentionally excluded.
+            ─────────────────────────────────────────────────────────── */}
+              <div className="border-t px-6 py-4 space-y-2">
+                {course.details?.certificate && (
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <Award size={13} className="text-green-600" />
+                    Microsoft Certified Certificate on completion
+                  </div>
+                )}
+                {/* Lifetime Access intentionally omitted */}
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <ShieldCheck size={13} className="text-green-600" />
+                  100% fee return on course completion
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Target size={13} className="text-green-600" />
+                  5 real-world industry-level projects
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
 
       {/* ── STICKY TABS ─────────────────────────────────────────── */}
       <section className="bg-white border-t border-b border-gray-200 sticky top-0 z-30 shadow-sm">
@@ -872,6 +1090,7 @@ export default function CourseDetailPage() {
               className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold flex items-center gap-3 mx-auto hover:bg-green-50 transition"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
+              onClick={handleEnroll}
             >
               <BookOpen className="w-5 h-5" />
               Enroll Now
