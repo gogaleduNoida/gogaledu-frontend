@@ -26,7 +26,7 @@ export default function WorkshopPage() {
     
 
   function getTimeLeft() {
-    const TARGET_DATE = new Date("2026-01-11T19:30:00+05:30");
+    const TARGET_DATE = new Date("2026-04-12T19:30:00+05:30");
     const now = new Date();
     const diff = TARGET_DATE - now;
 
@@ -403,7 +403,7 @@ export default function WorkshopPage() {
                     <Clock className="w-4 h-4 md:w-5 md:h-5 text-green-600" />
                     <span className="font-semibold text-gray-700 text-sm md:text-base">Full Day Intensive</span>
                   </div>
-                  <div className="text-xs md:text-sm text-gray-500">Sunday, 11 Jan 2026 7:30 - 9:30 PM IST</div>
+                  <div className="text-xs md:text-sm text-gray-500">Sunday, 12 April 2026 7:30 - 9:30 PM IST</div>
                 </div>
               </div>
             </div>
@@ -582,7 +582,7 @@ export default function WorkshopPage() {
               ))}
             </div>
             <div className="text-green-300 text-xs md:text-sm">
-              Workshop: Jan 11, 2026 • 7:30 - 9:30 PM IST
+              Workshop: April 12, 2026 • 7:30 - 9:30 PM IST
             </div>
           </div>
 
@@ -693,7 +693,7 @@ export default function WorkshopPage() {
         <div className="flex flex-col md:flex-row md:items-center md:gap-3">
           <span className="text-green-300 line-through text-xs md:text-sm">₹499</span>
           <span className="hidden md:block text-white text-sm font-semibold">
-            Sunday, 11 Jan 2026 • 7:30 PM IST
+            Sunday, 12 April 2026 • 7:30 PM IST
           </span>
         </div>
       </div>
