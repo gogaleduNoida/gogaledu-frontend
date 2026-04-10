@@ -219,7 +219,7 @@ export default function WorkshopPage() {
                     <div className="space-y-1.5 text-sm md:text-base text-gray-700">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-green-600" />
-                        <span><strong>Date:</strong> Sunday, 11 Jan 2026</span>
+                        <span><strong>Date:</strong> Sunday, 12 April 2026</span>
                       </div>
                       <div><strong>Time:</strong> 7:30 - 9:30 PM IST</div>
                       <div><strong>Format:</strong> Live Interactive Session</div>
